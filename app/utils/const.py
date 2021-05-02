@@ -11,3 +11,4 @@ http_status = {
     'BAD_REQUEST':400,
     'SERVER_ERROR':500
 }
+

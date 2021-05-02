@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
 from time import time
-from app.models.usuario import Usuario
+from app.models.usuario_model import Usuario
 SECRET_KEY = "123"
 
 def get_token(data):
@@ -17,28 +17,44 @@ def decode(enconde):
     decode = jwt.decode(enconde, SECRET_KEY, algorithm='HS256')
     return decode
 
-def valid_token(data):
+def valid_token(data, only_admin = False):
     usuario = Usuario.query.filter_by(id=data['id']).first()
-    if(data['expiration'] > int(time()*1000) and not usuario):
+    if(data['expiration'] > int(time()*1000) and not usuario) or (only_admin and not usuario.admin):
         return False
-    return True
+    return usuario
 
-def security_token(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        from flask import request
-        token = request.headers.get('Authorization')
-        if not token:
-            return {'message':'header sem token'},401
-        error = {'message': 'Token invalido'}, 401
-        try:
-            tokenDecoded = decode(token)
-            if not valid_token(tokenDecoded):
+
+def token_decode_valid(token):
+    if not token:
+        return False
+    try:
+        tokenDecoded = decode(token)
+        usuario = valid_token(tokenDecoded)
+        if not usuario:
+            return False
+        return usuario
+    except:
+        return False
+
+def security_token(only_admin=False):
+    def security_token(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            from flask import request
+            token = request.headers.get('Authorization')
+
+            if not token:
+                return {'message':'header sem token'},401
+            error = {'message': 'Token invalido'}, 401
+            try:
+                tokenDecoded = decode(token)
+                if not valid_token(tokenDecoded, only_admin):
+                    return error
+            except:
                 return error
-        except:
-            return error
 
-        return func(*args, **kwargs)
+            return func(*args, **kwargs)
 
-    return wrapper
+        return wrapper
+    return security_token
 

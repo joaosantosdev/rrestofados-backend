@@ -67,3 +67,9 @@ class Model:
         db.session.remove()
         return result
 
+    @classmethod
+    def get_one(cls, **kwargs):
+        result = cls().query.filter_by(**kwargs).first()
+        return result
+
+

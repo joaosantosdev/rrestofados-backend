@@ -7,7 +7,10 @@ from app.schemas.telefone_schema import TelefoneSchema
 from app.schemas.cliente_schema import ClienteSchema
 from app import utils
 from app.utils import const
-
+from sqlalchemy import or_, func
+from flask import request
+from app.models.pagination import  Pagination
+import json
 
 def saveListTelefone(telefones_data, cliente):
     for telefone_data in telefones_data:
@@ -47,13 +50,31 @@ def saveCliente(data):
 
 
 def getAllPaginate():
-    pagination = Cliente.paginate_search()
+    query = Cliente.query.filter(Cliente.status.in_([1, 2]))
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('perPage', 10, type=int)
+    search = request.args.get('search', None, type=str)
+    search = json.loads(search)
+
+    def compareStr(field, fieldName):
+        return func.lower(field) == search.get(fieldName, '').lower() if search.get(fieldName, None) is not None else True
+
+    query = query.filter(or_(compareStr(Cliente.nome, 'nome'),
+                             compareStr(Cliente.cpf, 'cpf'),
+                             compareStr(Cliente.email, 'email')))
+
+    items = query.offset((page - 1) * per_page).limit(per_page).all()
+    count = query.count()
+    db.session.remove()
+    pagination = Pagination(items, count, page)
+
     return pagination
 
 
 def getById(id):
     try:
-        cliente = Cliente.filter(id=id)
+        cliente = Cliente.filter_one(id=id)
+
         return cliente
     except Exception as e:
         return e.__str__()
@@ -64,6 +85,7 @@ def deleteCliente(cliente):
         cliente.status = const.status.get('DELETED')
         db.session.add(cliente)
         db.session.commit()
+        db.session.remove()
         return cliente
     except Exception as e:
         return e.__str__()

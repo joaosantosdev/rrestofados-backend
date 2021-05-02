@@ -24,5 +24,6 @@ class Endereco(db.Model,Model):
     numero = db.Column(db.String(30),nullable=True)
     complemento = db.Column(db.String(30),nullable=True)
     rua = db.Column(db.String(100),nullable=True)
-
+    estado = db.relationship('Estado', lazy='joined')
+    municipio = db.relationship('Municipio', lazy='joined')
 

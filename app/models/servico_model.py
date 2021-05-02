@@ -5,6 +5,8 @@ from datetime import datetime
 class Servico(Model, db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     descricao = db.Column(db.String(500), nullable=False)
+    observacao = db.Column(db.String(300), nullable=True)
+    materiais_utilizados = db.Column(db.String(300), nullable=True)
     data = db.Column(db.DateTime, nullable=False)
     tecido_id = db.Column(db.BigInteger, db.ForeignKey('tecido.id'))
     tecido = db.relationship('Tecido', lazy='joined')
@@ -18,3 +20,5 @@ class Servico(Model, db.Model):
     status = db.Column(db.Integer, nullable=False)
     valor_frete = db.Column(db.Float, nullable=True)
     pagamentos = db.relationship('ServicoPagamento', lazy='joined', backref='servico')
+    cancelado = db.Column(db.Boolean, nullable=True, default=False)
+    motivo = db.Column(db.String(200), nullable=True)

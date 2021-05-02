@@ -8,7 +8,7 @@ cliente_controller = Blueprint('cliente', __name__)
 cliente_schema = ClienteSchema()
 
 @cliente_controller.route('', methods=['POST'])
-@security_token
+@security_token()
 def post():
     json = request.get_json()
     error = cliente_schema.validate(json)
@@ -25,13 +25,13 @@ def post():
 
 
 @cliente_controller.route('', methods=['GET'])
-@security_token
+@security_token()
 def get():
     pagination = cliente_service.getAllPaginate()
     return utils.response_paged(ClienteSchema, pagination)
 
 @cliente_controller.route('/<int:id>', methods=['GET'])
-@security_token
+@security_token()
 def getById(id):
     cliente = cliente_service.getById(id)
     if not cliente:
@@ -40,7 +40,7 @@ def getById(id):
     return utils.response_ok(cliente_schema.dump(cliente))
 
 @cliente_controller.route('/<int:id>', methods=['DELETE'])
-@security_token
+@security_token()
 def deleteById(id):
     cliente = cliente_service.getById(id)
     if not cliente:
@@ -55,7 +55,7 @@ def deleteById(id):
 
 
 @cliente_controller.route('/<int:id>', methods=['PUT'])
-@security_token
+@security_token()
 def updateCliente(id):
     json = request.get_json()
     error = cliente_schema.validate(json)
