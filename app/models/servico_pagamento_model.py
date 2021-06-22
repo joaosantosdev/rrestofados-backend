@@ -8,6 +8,6 @@ class ServicoPagamento(Model, db.Model):
     forma_pagamento_id = db.Column(db.BigInteger, db.ForeignKey('forma_pagamento.id'))
     pago = db.Column(db.Boolean)
     servico_id = db.Column(db.BigInteger, db.ForeignKey('servico.id'))
-
+    data = db.Column(db.DateTime, nullable=False)
 
     

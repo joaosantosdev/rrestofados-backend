@@ -1,7 +1,6 @@
 from app.models.model import Model
+from app.models.tipo_servico_model import TipoServico
 from app import db
-from datetime import datetime
-
 class Servico(Model, db.Model):
     id = db.Column(db.BigInteger, primary_key=True)
     descricao = db.Column(db.String(500), nullable=False)
@@ -22,3 +21,4 @@ class Servico(Model, db.Model):
     pagamentos = db.relationship('ServicoPagamento', lazy='joined', backref='servico')
     cancelado = db.Column(db.Boolean, nullable=True, default=False)
     motivo = db.Column(db.String(200), nullable=True)
+    tipo_servico_id = db.Column(db.BigInteger, db.ForeignKey('tipo_servico.id'), nullable=False)

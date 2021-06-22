@@ -30,10 +30,16 @@ def get_paged():
         return func.lower(field) == search.get(fieldName, '').lower() if search.get(fieldName,
                                                                                     None) is not None else True
 
+    print()
     if is_or:
-        query = query.filter(or_(compareStr(Cliente.nome, 'nome'),
-                                 compareStr(Cliente.cpf, 'cpf'),
-                                 compareStr(Cliente.email, 'email')))
+        query_cliente = Cliente.query.filter(Cliente.status.in_([1, 2]))
+
+        query_cliente = query_cliente.filter(or_(compareStr(Cliente.nome, 'nome'),
+                                                 compareStr(Cliente.cpf, 'cpf'),
+                                                 compareStr(Cliente.email, 'email')))
+
+        query = Servico.query.filter(Servico.cliente_id.in_(map(lambda cliente: cliente.id, query_cliente.all())))
+
     else:
         query = query.filter(and_(compare(Servico.status, 'status'),
                                   compare(Servico.tecido_id, 'tecido'),
@@ -123,7 +129,6 @@ def save_images(id_servico, lista):
             Image.query.filter_by(id=servico.image.id).delete()
             delete_image(servico.image.name + '.' + servico.image.ext, 'servicos')
 
-
         new_list = []
         i = 0
         for data in lista:
@@ -135,7 +140,6 @@ def save_images(id_servico, lista):
             if data['image'].get('base64'):
                 save_image(name, 'servicos', data['image']['base64'])
                 del data['image']['base64']
-
 
             image = Image(**data['image'])
             servico_image = ServicoImage(**data)

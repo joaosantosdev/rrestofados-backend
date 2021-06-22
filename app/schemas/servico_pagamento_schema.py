@@ -6,6 +6,7 @@ class ServicoPagamentoSchema(Schema):
     valor = fields.Float(required=True, allow_none=False)
     formaPagamentoId = fields.Int(required=True, attribute='forma_pagamento_id')
     pago = fields.Boolean(required=True)
+    data = fields.DateTime(required=True)
 
     @pre_load
     def valid_forma_pagamento(self, data, **kwargs):

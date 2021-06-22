@@ -31,7 +31,7 @@ class ServicoSchema(Schema):
     observacao = fields.Str(required=False, validate=validate.Length(0, 200), allow_none=True)
     materiaisUtilizados = fields.Str(required=False, validate=validate.Length(0, 200), allow_none=True, attribute='materiais_utilizados')
 
-    data = fields.Date(format='%Y-%m-%d', required=True)
+    data = fields.DateTime(required=True)
     tecidoId = fields.Int(required=True, attribute='tecido_id')
     corId = fields.Int(required=True, attribute='cor_id')
     dataEntrega = fields.Date('%Y-%m-%d',required=False, attribute='data_entrega')
@@ -41,6 +41,7 @@ class ServicoSchema(Schema):
     valorFrete = fields.Float(required=False, allow_none=True, attribute='valor_frete')
     motivo = fields.Str(required=False)
     cancelado = fields.Boolean(required=False)
+    tipoServicoId = fields.Int(required=True, attribute='tipo_servico_id')
 
 
 

@@ -17,7 +17,7 @@ migrate = Migrate(compare_type=True)
 def create_app():
     app = Flask(__name__)
     if __name__ == 'app':
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:061118@localhost:5432/rrestofados'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://ajfwdiszyqcoss:677d7778ab7dd4f99b7be74dd1f0d9caaf68683763b241c9105b4ee2ebf87e48@ec2-23-23-128-222.compute-1.amazonaws.com:5432/d166136c4a0gn5'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
         app.config['MAIL_PORT'] = 587
@@ -37,7 +37,11 @@ def create_app():
         from app.controllers.assets_controller import assets_controller
         from app.controllers.servico_controller import servico_controller
         from app.controllers.report_controller import report_controller
+        from app.controllers.home_controller import home_controller
+        from app.controllers.fluxo_caixa_controller import fluxo_caixa_controller
 
+        app.register_blueprint(fluxo_caixa_controller, url_prefix='/fluxocaixa')
+        app.register_blueprint(home_controller, url_prefix='/home')
         app.register_blueprint(report_controller, url_prefix='/reports')
         app.register_blueprint(servico_controller, url_prefix='/servicos')
         app.register_blueprint(assets_controller, url_prefix='/assets')
@@ -55,6 +59,10 @@ app = create_app()
 mail = Mail(app)
 
 
-@app.teardown_appcontext
-def shutdown_session(exception=None):
-    db.session.remove()
+@click.command(name='initdb')
+@with_appcontext
+def create_tables():
+    with app.app_context():
+        db.create_all()
+
+app.cli.add_command(create_tables)

@@ -7,6 +7,7 @@ from reportlab.lib.units import inch
 
 import os
 def build_report_servico(servico, usuario):
+    print(servico)
 
     name = 'assets/reports/servicos/servico_$id.pdf'
     name = name.replace('$id', str(servico.id))
@@ -38,12 +39,12 @@ def build_report_servico(servico, usuario):
 
     Story.append(Paragraph('<font size="13">Observação</font>', styles["Normal"]))
     Story.append(Spacer(1, 12))
-    Story.append(Paragraph(text_content.replace('$message', servico.observacao), styles["Normal"]))
+    Story.append(Paragraph(text_content.replace('$message', servico.observacao if servico.observacao else '' ), styles["Normal"]))
 
     Story.append(Spacer(1, 24))
     Story.append(Paragraph('<font size="13">Materiais a serem utilizados</font>', styles["Normal"]))
     Story.append(Spacer(1, 12))
-    Story.append(Paragraph(text_content.replace('$message', servico.materiais_utilizados), styles["Normal"]))
+    Story.append(Paragraph(text_content.replace('$message',  servico.materiais_utilizados if servico.materiais_utilizados else ''  ), styles["Normal"]))
     Story.append(Spacer(1, 48))
     Story.append(Paragraph('<center><font size="11" >contato@rrestofados.com</font></center>', styles["Normal"]))
 

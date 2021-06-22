@@ -1,3 +1,4 @@
 import bcrypt
 
-print(bcrypt.hashpw(str('12345678').encode(),bcrypt.gensalt()))
+print(bcrypt.hashpw(str('rrestofados').encode(),bcrypt.gensalt()))
+

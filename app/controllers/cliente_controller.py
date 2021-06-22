@@ -15,7 +15,6 @@ def post():
     if error:
         return utils.response_bad_request(error)
 
-    print(error)
 
     success, error = cliente_service.saveCliente(json)
     if error:

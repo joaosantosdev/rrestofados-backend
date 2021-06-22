@@ -28,15 +28,16 @@ def saveListTelefone(telefones_data, cliente):
 
 def saveCliente(data):
     try:
+        json_cliente = ClienteSchema().load(data)
         endereco_data = data.get('endereco')
         telefones_data = data.get('telefones')
         endereco = Endereco(**(EnderecoSchema().load(endereco_data)))
         db.session.add(endereco)
 
-        del data['endereco']
-        del data['telefones']
+        del json_cliente['endereco']
+        del json_cliente['telefones']
 
-        cliente = Cliente(**data)
+        cliente = Cliente(**json_cliente)
         cliente.endereco = endereco
         cliente.endereco_id = endereco.id
         db.session.add(cliente)
@@ -93,10 +94,12 @@ def deleteCliente(cliente):
 
 def updateCliente(cliente, json):
     try:
-        cliente.update(json, ['endereco', 'endereco_id', 'telefones'])
+
+        data = ClienteSchema().load(json)
+        cliente.update(data, ['endereco', 'endereco_id', 'telefones'])
 
         cliente.endereco.update((EnderecoSchema().load(json.get('endereco'))), ['id'])
-        print(cliente.endereco.rua)
+        print(cliente.fisica_juridica)
         db.session.add(cliente.endereco)
         db.session.add(cliente)
         db.session.commit()
